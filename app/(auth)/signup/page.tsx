@@ -1,6 +1,5 @@
 import { getServerSession } from "next-auth";
 import { getProviders } from "next-auth/react";
-import { authOptions } from "../../api/auth/[...nextauth]/route";
 import React from "react";
 import { redirect } from "next/navigation";
 import OAuthLoginButton from "@/components/auth/OAuthLoginButton";
@@ -11,7 +10,7 @@ import Divider from "@/components/ui/divider";
 import SignupForm from "@/components/auth/signup/SignupForm";
 
 const page = async () => {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   const providers = await getProviders();
   if (session) redirect("/");
 

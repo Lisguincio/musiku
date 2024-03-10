@@ -5,7 +5,7 @@ import nextAuth from "next-auth";
 const bcrypt = require("bcrypt");
 
 import NextAuth from "next-auth";
-import type { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions, Session } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import DiscordProvider from "next-auth/providers/discord";
 import EmailProvider from "next-auth/providers/email";
@@ -13,7 +13,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { users } from "@/db/schema/users";
 import { eq } from "drizzle-orm";
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   //debug: process.env.NODE_ENV === "development",
   session: {
@@ -89,15 +89,16 @@ export const authOptions: NextAuthOptions = {
           .where(eq(users.id, user.id));
 
         const role = result.at(0)?.role;
+
         token.role = role;
         token.id = user.id;
       }
       return token;
     },
-    session({ session, token, user }) {
+    session({ session, token }) {
       if (session.user) {
-        session.user.role = token.role;
-        session.user.id = token.id;
+        session.user.role = token.role as string;
+        session.user.id = token.id as string;
       }
       return session;
     },

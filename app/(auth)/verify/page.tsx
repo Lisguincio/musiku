@@ -1,11 +1,10 @@
 import Image from "next/image";
 import React from "react";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 
 const Page = async () => {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   if (session?.user) redirect("/");
   return (
     <div className="w-full h-full justify-center flex items-center flex-col px-20 gap-2">
