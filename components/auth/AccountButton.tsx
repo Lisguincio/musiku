@@ -17,12 +17,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { DropdownMenuGroup } from "@radix-ui/react-dropdown-menu";
 import { LogOut, User } from "lucide-react";
 import Link from "next/link";
+import { capitalize } from "@/utils/utils";
 
 const AccountButton = ({ session }: { session: Session | null }) => {
   if (session) {
     return (
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger asChild className="max-md:hidden">
           <Avatar>
             <AvatarImage src={session.user?.image || undefined} />
             <AvatarFallback>
@@ -31,7 +32,14 @@ const AccountButton = ({ session }: { session: Session | null }) => {
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>{session.user?.email}</DropdownMenuLabel>
+          <DropdownMenuLabel>
+            <div className="flex flex-col">
+              <span>{capitalize(session.user.name)}</span>
+              <span className="font-normal text-muted-foreground">
+                {session.user?.email}
+              </span>
+            </div>
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem asChild className="cursor-pointer">

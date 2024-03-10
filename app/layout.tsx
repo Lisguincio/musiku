@@ -1,6 +1,13 @@
 import "@/app/globals.css";
 import Providers from "@/providers";
 import type { Metadata } from "next";
+import { Fira_Sans } from "next/font/google";
+
+const fira = Fira_Sans({
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -13,9 +20,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html suppressHydrationWarning lang="it">
+    <html suppressHydrationWarning lang="it" className={fira.className}>
       <body>
-        <Providers>{children}</Providers>
+        <div vaul-drawer-wrapper="">
+          <Providers>{children}</Providers>
+        </div>
       </body>
     </html>
   );
