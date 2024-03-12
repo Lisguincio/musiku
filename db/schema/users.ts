@@ -9,4 +9,5 @@ export const users = pgTable("user", {
   image: text("image"),
   role: text("role").notNull().default("user"),
   password: varchar("password", { length: 256 }),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
 });

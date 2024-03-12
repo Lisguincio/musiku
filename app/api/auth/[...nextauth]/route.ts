@@ -47,7 +47,7 @@ const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password)
-          throw new Error("Missing credentials");
+          throw new Error("Credenziali non fornite");
         const result = await db
           .select()
           .from(users)
@@ -55,13 +55,14 @@ const authOptions: NextAuthOptions = {
 
         const user = result.at(0);
 
-        if (!user || !user.password) throw new Error("Invalid Credentials");
+        if (!user || !user.password)
+          throw new Error("L'utente non è stato trovato");
 
         const isCorrectPassword = await bcrypt.compare(
           credentials.password,
           user.password
         );
-        if (!isCorrectPassword) throw new Error("Invalid Credentials");
+        if (!isCorrectPassword) throw new Error("La password non è corretta");
 
         if (user.emailVerified === null)
           throw new Error("L'email non è stata verificata");

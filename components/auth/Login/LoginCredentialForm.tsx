@@ -5,13 +5,13 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -22,6 +22,7 @@ const formSchema = z.object({
 });
 
 const LoginCredentialForm = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     reValidateMode: "onSubmit",
     resolver: zodResolver(formSchema),
@@ -32,24 +33,19 @@ const LoginCredentialForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const result = signIn("credentials", {
+    const res = await signIn("credentials", {
       email: values.email,
       password: values.password,
-    }).then(
-      (e) => {
-        console.log(e);
-        redirect("/");
-      },
-      (e) => console.error(e)
-    );
-
-    toast.promise(result, {
-      loading: "Caricamento...",
-      success: "Accesso effettuato",
-      error: (error) => {
-        return error?.error || "Errore";
-      },
+      redirect: false,
     });
+    if (!res) toast.error("Errore sconosciuto");
+    if (res?.error) {
+      toast.error(`${res?.status} - ${res?.error}`);
+    }
+    if (res?.ok) {
+      router.replace("/");
+      toast.success("Accesso effettuato");
+    }
   }
   return (
     <Form {...form}>
@@ -76,8 +72,11 @@ const LoginCredentialForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="relative w-full">
           Accedi
+          {form.formState.isSubmitting && (
+            <Loader2 className="absolute left-3 mr-auto size-4 animate-spin" />
+          )}
         </Button>
       </form>
     </Form>

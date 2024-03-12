@@ -4,7 +4,7 @@ import React from "react";
 
 type TextProps =
   | {
-      withText: true;
+      withText?: true;
       textProps?: React.HTMLProps<HTMLSpanElement>;
     }
   | {

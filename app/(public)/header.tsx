@@ -1,6 +1,12 @@
 import PublicDrawer from "@/components/Drawer/PublicDrawer";
 import Logo from "@/components/Logo/Logo";
 import AccountButton from "@/components/auth/AccountButton";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 
@@ -11,10 +17,19 @@ const PublicHeader = async () => {
       <Link href="/">
         <Logo withText />
       </Link>
-      <nav className="w-full flex-1 flex justify-end">
+      <nav className="w-full flex-1 gap-8 flex justify-end">
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem asChild>
+              <Link href="/app" legacyBehavior passHref>
+                <NavigationMenuLink>Dashboard</NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
         <AccountButton session={session} />
-        {<PublicDrawer session={session} />}
       </nav>
+      <PublicDrawer session={session} />
     </div>
   );
 };

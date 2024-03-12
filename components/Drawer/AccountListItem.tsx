@@ -7,7 +7,7 @@ import { NavigationMenuItem } from "../ui/navigation-menu";
 import Link from "next/link";
 import { DrawerClose } from "../ui/offcanvas";
 
-const AccountListItem = ({ session }: { session: Session | null }) => {
+const AccountListItem = ({ session }: { session?: Session | null }) => {
   if (!session) return null;
   return (
     <div className="grid grid-cols-6 items-center ">
@@ -22,22 +22,18 @@ const AccountListItem = ({ session }: { session: Session | null }) => {
         </AvatarFallback>
       </Avatar>
 
-      <div className="flex flex-col justify-center px-2 col-span-5">
-        <DrawerClose asChild>
-          <Link href={"/profile"} className=" font-semibold">
-            {capitalize(session.user.name)}
-          </Link>
-        </DrawerClose>
+      <div className="flex flex-col max-sm:hidden *:truncate justify-center pl-4 col-span-5">
+        <Link href={"/profile"} className="font-semibold">
+          {capitalize(session.user.name)}
+        </Link>
         <span className="text-muted-foreground">{session.user.email}</span>
         <div className="flex">
-          <DrawerClose asChild>
-            <button
-              onClick={() => signOut()}
-              className="text-destructive flex text-left"
-            >
-              Esci
-            </button>
-          </DrawerClose>
+          <button
+            onClick={() => signOut()}
+            className="text-destructive flex text-left"
+          >
+            Esci
+          </button>
         </div>
       </div>
     </div>
