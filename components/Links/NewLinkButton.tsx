@@ -1,13 +1,8 @@
-"use client";
-import React from "react";
-import { Button } from "../ui/button";
-import { useSession } from "next-auth/react";
 import { Plus } from "lucide-react";
+import { Button } from "../ui/button";
 import NewLinkDialog from "./NewLinkForm";
 
 const NewLinkButton = () => {
-  const session = useSession();
-
   return (
     <NewLinkDialog
       trigger={

@@ -25,6 +25,9 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
+import { addLink } from "@/actions/links/getLinks";
+import { toast } from "sonner";
+import { link } from "@prisma/client";
 
 const formSchema = z.object({
   title: z.string(),
@@ -43,9 +46,19 @@ export function NewLinkDialog({ trigger }: { trigger: React.ReactNode }) {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    setOpen(false);
+    await addLink({
+      title: values.title,
+      links: [{ url: values.url }],
+      author: "Io",
+    }).then(
+      (res) => {
+        toast.success("Link aggiunto con successo!");
+        setOpen(false);
+      },
+      (err) => toast.error("Errore durante l'aggiunta del link")
+    );
   }
 
   return (

@@ -1,26 +1,23 @@
-import db from "@/db/schema";
 import { Adapter } from "next-auth/adapters";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import nextAuth from "next-auth";
-const bcrypt = require("bcrypt");
-
-import NextAuth from "next-auth";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import NextAuth, { getServerSession } from "next-auth";
 import type { NextAuthOptions, Session } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import DiscordProvider from "next-auth/providers/discord";
 import EmailProvider from "next-auth/providers/email";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { users } from "@/db/schema/users";
-import { eq } from "drizzle-orm";
+import { PrismaClient } from "@prisma/client";
+const bcrypt = require("bcrypt");
+const prisma = new PrismaClient();
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   //debug: process.env.NODE_ENV === "development",
   session: {
     strategy: "jwt",
   },
   // Configure one or more authentication providers
-  adapter: DrizzleAdapter(db) as Adapter,
+  adapter: PrismaAdapter(prisma) as Adapter,
   pages: {
     signIn: "/login",
   },
@@ -48,12 +45,9 @@ const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password)
           throw new Error("Credenziali non fornite");
-        const result = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, credentials.email));
-
-        const user = result.at(0);
+        const user = await prisma.user.findFirst({
+          where: { email: credentials.email },
+        });
 
         if (!user || !user.password)
           throw new Error("L'utente non è stato trovato");
@@ -84,14 +78,14 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, account, user }) {
       if (account) {
-        const result = await db
-          .select({ role: users.role })
-          .from(users)
-          .where(eq(users.id, user.id));
+        const result = await prisma.user.findUnique({
+          where: {
+            id: user.id,
+          },
+        });
+        if (!result) throw new Error("User not found");
 
-        const role = result.at(0)?.role;
-
-        token.role = role;
+        token.role = result.role;
         token.id = user.id;
       }
       return token;
@@ -105,6 +99,8 @@ const authOptions: NextAuthOptions = {
     },
   },
 };
+
+export const getServerAuthSession = () => getServerSession(authOptions);
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
