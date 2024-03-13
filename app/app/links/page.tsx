@@ -1,17 +1,15 @@
+"use client";
 import { getLinks } from "@/actions/links/getLinks";
+import LinksList from "@/components/Links/LinksList";
 import NewLinkButton from "@/components/Links/NewLinkButton";
+import { useQuery } from "@tanstack/react-query";
 
-const Page = async () => {
-  const links = await getLinks();
-
+const Page = () => {
   return (
     <div>
       <NewLinkButton />
-      <h1>Links</h1>
-      <p>Links page content</p>
-      {links.map((link) => (
-        <div key={link.id}>{link.title}</div>
-      ))}
+
+      <LinksList />
     </div>
   );
 };

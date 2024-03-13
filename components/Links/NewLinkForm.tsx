@@ -1,8 +1,8 @@
 "use client";
+import { addLink } from "@/actions/links/getLinks";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -11,7 +11,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -21,44 +25,43 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
-import { addLink } from "@/actions/links/getLinks";
 import { toast } from "sonner";
-import { link } from "@prisma/client";
 
 const formSchema = z.object({
+  author: z.string(),
   title: z.string(),
-  url: z.string(),
 });
 
 export function NewLinkDialog({ trigger }: { trigger: React.ReactNode }) {
+  const queryClient = useQueryClient();
   const [open, setOpen] = React.useState(false);
+  const mutation = useMutation({
+    mutationKey: ["links"],
+    mutationFn: addLink,
+    onSuccess: () => {
+      toast.success("Link added");
+      queryClient.invalidateQueries({ queryKey: ["links"] });
+    },
+    onSettled: () => {
+      setOpen(false);
+    },
+  });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      author: "",
       title: "",
-      url: "",
     },
   });
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    await addLink({
-      title: values.title,
-      links: [{ url: values.url }],
-      author: "Io",
-    }).then(
-      (res) => {
-        toast.success("Link aggiunto con successo!");
-        setOpen(false);
-      },
-      (err) => toast.error("Errore durante l'aggiunta del link")
-    );
+    mutation.mutate(values);
+    if (mutation.isSuccess) {
+      setOpen(false);
+    }
   }
 
   return (
@@ -75,8 +78,25 @@ export function NewLinkDialog({ trigger }: { trigger: React.ReactNode }) {
           <form
             id="newLinkForm"
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8"
+            className="space-y-4"
           >
+            <FormField
+              control={form.control}
+              name="author"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Author</FormLabel>
+                  <FormControl>
+                    <Input placeholder="shadcn" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    This is your public display name.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="title"
