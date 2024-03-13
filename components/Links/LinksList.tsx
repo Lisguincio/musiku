@@ -16,7 +16,7 @@ const LinksList = () => {
     return (
       <div>
         {data?.result?.map((link) => (
-          <div id={link.id}>
+          <div key={link.id}>
             {link.title} - {link.author}
           </div>
         ))}
