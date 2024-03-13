@@ -25,7 +25,7 @@ model account {
 }
 
 model link {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String    @id @default(uuid())
   title       String
   content     String?
   author      String
@@ -47,9 +47,9 @@ model session {
 }
 
 model user {
-  id            String    @id(map: "User_pkey")
+  id            String    @id @default(uuid())
   name          String?
-  email         String
+  email         String    @unique
   emailVerified DateTime? @db.Timestamp(6)
   image         String?
   role          String    @default("user")

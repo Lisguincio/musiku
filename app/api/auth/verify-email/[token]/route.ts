@@ -1,6 +1,4 @@
-import db from "@/db/schema";
-import { users } from "@/db/schema/users";
-import { SQL, eq } from "drizzle-orm";
+import prisma from "@/prisma/prismaClient";
 import jsonwebtoken from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
@@ -19,13 +17,10 @@ export async function GET(
     const { email } = decodedToken as {
       email: string;
     };
-
-    await db
-      .update(users)
-      .set({
-        emailVerified: new Date(),
-      })
-      .where(eq(users.email, email));
+    await prisma.user.update({
+      data: { emailVerified: new Date() },
+      where: { email },
+    });
   } catch (err) {
     return new NextResponse("Token non valido", { status: 401 });
   }

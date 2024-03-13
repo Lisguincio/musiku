@@ -6,8 +6,8 @@ import OAuthLoginButton from "@/components/auth/OAuthLoginButton";
 import { z } from "zod";
 import LoginCredentialForm from "@/components/auth/Login/LoginCredentialForm";
 import Image from "next/image";
-import Divider from "@/components/ui/divider";
 import SignupForm from "@/components/auth/signup/SignupForm";
+import { Separator } from "@/components/ui/separator";
 
 const page = async () => {
   const session = await getServerSession();
@@ -29,13 +29,9 @@ const page = async () => {
             <SignupForm />
           </div>
         )}
-        <Divider
-          orientation={"horizontal"}
-          className="my-8"
-          text={
-            <span className="text-stone-400 px-4 bg-background">Oppure</span>
-          }
-        />
+        <Separator orientation={"horizontal"} className="my-8">
+          <span className="text-stone-400 px-4 bg-background">Oppure</span>
+        </Separator>
         <div className="flex w-full h-full justify-evenly">
           {providers &&
             Object.values(providers).map((provider) => {

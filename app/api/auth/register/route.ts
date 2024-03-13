@@ -1,5 +1,3 @@
-import db from "@/db/schema";
-import { users } from "@/db/schema/users";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
@@ -7,6 +5,7 @@ import jsonwebToken from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import prisma from "@/prisma/prismaClient";
 
 type SignupCredential = {
   email: string;
@@ -23,11 +22,12 @@ export async function POST(request: NextRequest) {
   console.log(`Password Generata: ${hashedPassword}`);
 
   try {
-    await db.insert(users).values({
-      id: uuidv4(),
-      name,
-      email,
-      password: hashedPassword,
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+      },
     });
   } catch (err) {
     console.error(err);
