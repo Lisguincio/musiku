@@ -1,6 +1,5 @@
 "use server";
-
-import { getServerAuthSession } from "@/app/api/auth/[...nextauth]/route";
+import { getServerAuthSession } from "@/auth";
 import prisma from "@/prisma/prismaClient";
 import { Prisma } from "@prisma/client";
 
