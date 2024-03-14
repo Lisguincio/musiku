@@ -7,6 +7,9 @@ const nextConfig = {
         hostname: "images.unsplash.com",
       },
       {
+        hostname: "placehold.co",
+      },
+      {
         hostname: "cdn.discordapp.com",
       },
     ],

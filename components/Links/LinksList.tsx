@@ -1,15 +1,14 @@
 "use client";
 import { deleteLink, getLinks } from "@/actions/links/LinksActions";
+import { type link as LinkType } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Delete, Loader, Trash } from "lucide-react";
-import { link } from "@prisma/client";
-import React from "react";
-import { Button } from "../ui/button";
 import { toast } from "sonner";
+import { DataTable } from "../Table/DataTable";
+import columns from "./columns";
 
-const LinksList = ({ links }: { links: link[] }) => {
+const LinksList = ({ links }: { links: LinkType[] }) => {
   const queryClient = useQueryClient();
-  const { data, isError, error, isFetching, isPlaceholderData } = useQuery({
+  const { data, isError, error } = useQuery({
     queryKey: ["links"],
     queryFn: () => getLinks(),
     initialData: links,
@@ -23,22 +22,11 @@ const LinksList = ({ links }: { links: link[] }) => {
     },
   });
 
-  if (isFetching) return <Loader className="animate-spin" />;
   if (isError) return <div>Errore: {error.message}</div>;
   if (data)
     return (
-      <div className="flex flex-col gap-2">
-        {data?.map((link) => (
-          <div key={link.id} className="w-full flex items-center bg-black  p-6">
-            {link.title} - {link.author}
-            <Button
-              className="ml-auto"
-              onClick={() => mutation.mutate(link.id)}
-            >
-              <Trash className="size-4" />
-            </Button>
-          </div>
-        ))}
+      <div>
+        <DataTable columns={columns} data={data} />
       </div>
     );
 };
