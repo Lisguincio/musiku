@@ -17,13 +17,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { DropdownMenuGroup } from "@radix-ui/react-dropdown-menu";
 import { LogOut, User } from "lucide-react";
 import Link from "next/link";
-import { capitalize } from "@/utils/utils";
+import { capitalize, cn } from "@/utils/utils";
+import { ClassNameValue } from "tailwind-merge";
 
-const AccountButton = ({ session }: { session: Session | null }) => {
+const AccountButton = ({
+  session,
+  classNames,
+}: {
+  session: Session | null;
+  classNames?: ClassNameValue;
+}) => {
   if (session) {
     return (
       <DropdownMenu>
-        <DropdownMenuTrigger asChild className="max-md:hidden">
+        <DropdownMenuTrigger asChild className={cn("", classNames)}>
           <Avatar>
             <AvatarImage src={session.user?.image || undefined} />
             <AvatarFallback>

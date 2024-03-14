@@ -1,6 +1,7 @@
 "use client";
 import AccountListItem from "@/components/Drawer/AccountListItem";
 import Logo from "@/components/Logo/Logo";
+import AccountButton from "@/components/auth/AccountButton";
 import { Card } from "@/components/ui/card";
 import {
   NavigationMenu,
@@ -9,6 +10,13 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { navLinks } from "@/constants/nav";
 import { cn } from "@/utils/utils";
 import { LayoutDashboard, LucideIcon, Music } from "lucide-react";
 import { Session } from "next-auth";
@@ -26,36 +34,62 @@ const Sidebar = () => {
         <Card className="w-full  p-2 mt-8 flex ">
           <NavigationMenu data-orientation="vertical">
             <NavigationMenuList data-orientation="vertical">
-              <SidebarItem
-                href="/app"
-                label="Dashboard"
-                icon={<LayoutDashboard />}
-              />
-              <SidebarItem href="/app/links" label="Links" icon={<Music />} />
+              <TooltipProvider>
+                {navLinks.map((link) => (
+                  <Tooltip key={link.title}>
+                    <TooltipTrigger>
+                      <SidebarItem
+                        href={link.path}
+                        label={link.title}
+                        Icon={link.icon}
+                      />
+                    </TooltipTrigger>
+                    {link.tooltip && (
+                      <TooltipContent
+                        side="right"
+                        className="flex items-center gap-4 sm:hidden"
+                      >
+                        {link.title}
+                        {link.label && (
+                          <span className="ml-auto text-muted-foreground">
+                            {link.label}
+                          </span>
+                        )}
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                ))}
+              </TooltipProvider>
             </NavigationMenuList>
           </NavigationMenu>
         </Card>
       </div>
-      <Card className="w-full px-2 py-2">
-        <AccountListItem session={session} />
+      <Card className=" flex items-center justify-center w-full px-2 py-2 ">
+        <AccountButton session={session} classNames={"sm:hidden"} />
+        <AccountListItem session={session} classNames={"max-sm:hidden"} />
       </Card>
     </div>
   );
 };
 
 const SidebarItem = ({
-  icon,
+  Icon,
   label,
   href,
 }: {
-  icon: React.ReactNode;
+  Icon: LucideIcon;
   label: string;
   href: string;
 }) => (
   <NavigationMenuItem>
     <Link href={href} legacyBehavior passHref>
-      <NavigationMenuLink className={cn(navigationMenuTriggerStyle())}>
-        {icon}
+      <NavigationMenuLink
+        className={cn(
+          navigationMenuTriggerStyle(),
+          "w-auto sm:w-full px-2 sm:px-4"
+        )}
+      >
+        <Icon className="size-6 md:size-6" />
         <span className={cn("max-sm:hidden ml-2")}>{label}</span>
       </NavigationMenuLink>
     </Link>

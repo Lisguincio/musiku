@@ -4,7 +4,6 @@ import prisma from "@/prisma/prismaClient";
 import { Prisma } from "@prisma/client";
 
 export async function getLinks() {
-  console.log("Richiesta di links ricevuta!");
   const session = await getServerAuthSession();
   if (!session) throw new Error("Utente non autenticato");
   try {
@@ -15,7 +14,7 @@ export async function getLinks() {
         },
       },
     });
-    return { result };
+    return result;
   } catch (e) {
     console.error(e);
     throw e;
@@ -37,6 +36,21 @@ export async function addLink({
             id: session.user.id,
           },
         },
+      },
+    });
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
+export async function deleteLink(id: string) {
+  try {
+    console.log(`Rimozione di un link[${id}] ricevuta!`);
+    const session = await getServerAuthSession();
+    if (!session) throw new Error("Utente non autenticato");
+    return prisma.link.delete({
+      where: {
+        id,
       },
     });
   } catch (e) {

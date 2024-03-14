@@ -1,5 +1,5 @@
 "use client";
-import { addLink } from "@/actions/links/getLinks";
+import { addLink } from "@/actions/links/LinksActions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

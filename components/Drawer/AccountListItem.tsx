@@ -1,16 +1,21 @@
 "use client";
-import { capitalize } from "@/utils/utils";
+import { capitalize, cn } from "@/utils/utils";
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { NavigationMenuItem } from "../ui/navigation-menu";
 import Link from "next/link";
-import { DrawerClose } from "../ui/offcanvas";
+import { ClassNameValue } from "tailwind-merge";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-const AccountListItem = ({ session }: { session?: Session | null }) => {
+const AccountListItem = ({
+  session,
+  classNames,
+}: {
+  session?: Session | null;
+  classNames?: ClassNameValue;
+}) => {
   if (!session) return null;
   return (
-    <div className="grid grid-cols-6 items-center ">
+    <div className={cn("grid grid-cols-6 items-center ", classNames)}>
       <Avatar className="">
         <AvatarImage
           src={session.user?.image || undefined}

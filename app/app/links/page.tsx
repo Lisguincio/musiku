@@ -1,15 +1,18 @@
-"use client";
-import { getLinks } from "@/actions/links/getLinks";
+import { getLinks } from "@/actions/links/LinksActions";
 import LinksList from "@/components/Links/LinksList";
 import NewLinkButton from "@/components/Links/NewLinkButton";
-import { useQuery } from "@tanstack/react-query";
 
-const Page = () => {
+const Page = async () => {
+  const links = await getLinks();
+
   return (
-    <div>
-      <NewLinkButton />
-
-      <LinksList />
+    <div className="flex flex-col ">
+      <div>
+        <NewLinkButton />
+      </div>
+      <div className="mt-4">
+        <LinksList links={links} />
+      </div>
     </div>
   );
 };

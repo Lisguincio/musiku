@@ -6,7 +6,7 @@ const NewLinkButton = () => {
   return (
     <NewLinkDialog
       trigger={
-        <Button variant={"outline"}>
+        <Button variant={"outline"} className="">
           <Plus className="size-4 mr-3" />
           Aggiungi Link
         </Button>
