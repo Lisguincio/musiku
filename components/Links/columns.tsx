@@ -1,6 +1,3 @@
-import { link } from "@prisma/client";
-import { createColumnHelper } from "@tanstack/react-table";
-import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,16 +7,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  CircleCheck,
-  CircleX,
-  CrossIcon,
-  MoreHorizontal,
-  MoreVertical,
-} from "lucide-react";
-import { Checkbox } from "../ui/checkbox";
+import { link } from "@prisma/client";
+import { createColumnHelper } from "@tanstack/react-table";
+import { CircleCheck, CircleX, MoreVertical } from "lucide-react";
 import { DataTableColumnHeader } from "../Table/DataTableColumnHeader";
-import Image from "next/image";
+import { Checkbox } from "../ui/checkbox";
+import LinkOptionDropdown from "./LinkOptionDropdown";
+import useTogglePublished from "@/mutations/useTogglePublished";
+import { Switch } from "../ui/switch";
+import LinkPublishedToggle from "./LinkPublishedToggle";
 
 const linkColumnHelper = createColumnHelper<link>();
 
@@ -37,6 +33,7 @@ const selection = linkColumnHelper.display({
       />
     </div>
   ),
+  maxSize: 10,
   cell: ({ row }) => (
     <Checkbox
       checked={row.getIsSelected()}
@@ -49,6 +46,7 @@ const selection = linkColumnHelper.display({
 });
 const coverImage = linkColumnHelper.display({
   id: "coverImage",
+  maxSize: 10,
   header: ({ column }) => (
     <DataTableColumnHeader column={column} title="Cover" />
   ),
@@ -77,51 +75,17 @@ const title = linkColumnHelper.accessor("title", {
   footer: (props) => props.column.id,
 });
 
-const publishDate = linkColumnHelper.accessor("published", {
-  header: ({ column }) => (
-    <DataTableColumnHeader column={column} title="Published" />
-  ),
-  cell: ({ cell }) => {
-    const value = cell.getValue();
-    const icon = value ? (
-      <CircleCheck className="text-green-500" />
-    ) : (
-      <CircleX className="text-red-500" />
-    );
-    return icon;
-  },
+const published = linkColumnHelper.display({
+  id: "published",
+  cell: ({ row }) => <LinkPublishedToggle link={row.original} />,
   footer: (props) => props.column.id,
 });
 
 const actions = linkColumnHelper.display({
   id: "actions",
-  cell: ({ row }) => {
-    const payment = row.original;
-
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreVertical className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem
-            onClick={() => navigator.clipboard.writeText(payment.id)}
-          >
-            Copy payment ID
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>View customer</DropdownMenuItem>
-          <DropdownMenuItem>View payment details</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
-  },
+  cell: ({ row }) => <LinkOptionDropdown link={row.original} />,
 });
 
-const columns = [selection, publishDate, coverImage, title, actions];
+const columns = [selection, published, coverImage, title, actions];
 
 export default columns;

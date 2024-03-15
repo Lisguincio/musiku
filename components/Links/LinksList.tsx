@@ -14,13 +14,6 @@ const LinksList = ({ links }: { links: LinkType[] }) => {
     initialData: links,
   });
 
-  const mutation = useMutation({
-    mutationFn: (id: string) => deleteLink(id),
-    onSuccess: () => {
-      toast.success("Link rimosso con successo!");
-      queryClient.invalidateQueries({ queryKey: ["links"] });
-    },
-  });
 
   if (isError) return <div>Errore: {error.message}</div>;
   if (data)
