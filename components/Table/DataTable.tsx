@@ -40,6 +40,9 @@ export function DataTable<TData, TValue>({
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    defaultColumn: {
+      size: 10,
+    },
     state: {
       rowSelection,
       sorting,
@@ -50,14 +53,17 @@ export function DataTable<TData, TValue>({
     <>
       <DataTableViewOptions table={table} />
       <div className="rounded-md border">
-        <Table className="table-fixed">
+        <Table className="table-auto">
           <TableHeader>
             {" "}
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-inherit">
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      style={{ width: `${header.getSize()}%` }}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(

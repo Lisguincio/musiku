@@ -39,7 +39,7 @@ const Logo = ({
       <Image
         width={width}
         height={height}
-        className={cn(className, "hidden dark:block select-none")}
+        className={cn(className, " select-none")}
         src={"/MusikuLogoInverted.png"}
         alt="Musiku Logo"
         {...props}

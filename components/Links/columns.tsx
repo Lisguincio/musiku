@@ -33,7 +33,6 @@ const selection = linkColumnHelper.display({
       />
     </div>
   ),
-  maxSize: 10,
   cell: ({ row }) => (
     <Checkbox
       checked={row.getIsSelected()}
@@ -46,7 +45,6 @@ const selection = linkColumnHelper.display({
 });
 const coverImage = linkColumnHelper.display({
   id: "coverImage",
-  maxSize: 10,
   header: ({ column }) => (
     <DataTableColumnHeader column={column} title="Cover" />
   ),
@@ -69,6 +67,7 @@ const coverImage = linkColumnHelper.display({
 });
 
 const title = linkColumnHelper.accessor("title", {
+  size: 200,
   header: ({ column }) => (
     <DataTableColumnHeader column={column} title="Title" />
   ),

@@ -18,15 +18,15 @@ import {
 } from "@/components/ui/tooltip";
 import { navLinks } from "@/constants/nav";
 import { cn } from "@/utils/utils";
-import { LayoutDashboard, LucideIcon, Music } from "lucide-react";
-import { Session } from "next-auth";
+import { LucideIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 const Sidebar = () => {
   const session = useSession().data;
+
   return (
-    <div className=" md:min-w-[250px] max-w-[280px] max-sm:max-w-[100px]  py-8 px-4 flex h-screen flex-col items-center  border  bg-background">
+    <div className="max-md:hidden md:min-w-[250px] max-w-[280px] max-sm:max-w-[100px] py-8 px-4 flex h-screen flex-col items-center  border  bg-background">
       <Link href={"/app"}>
         <Logo withText />
       </Link>

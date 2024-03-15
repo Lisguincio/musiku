@@ -1,12 +1,15 @@
-import { getServerAuthSession } from "@/auth";
 import React from "react";
 import Sidebar from "./sidebar";
+import AppHeader from "./header";
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex">
-      <Sidebar />
-      <main className="p-12 w-full">{children}</main>
+    <div>
+      <AppHeader />
+      <div className="md:flex">
+        <Sidebar />
+        <main className=" p-4 w-full">{children}</main>
+      </div>
     </div>
   );
 };

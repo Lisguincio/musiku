@@ -1,22 +1,30 @@
+"use client";
 import { deleteLink } from "@/actions/links/LinksActions";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { link } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { MoreVertical, Trash2 } from "lucide-react";
+import { ClipboardCopy, LinkIcon, MoreVertical, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 const LinkOptionDropdown = ({ link }: { link: link }) => {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
+
+  function copyToClipboard() {
+    const navigator = window.navigator as Navigator;
+    navigator.clipboard.writeText(link.id).then(() => {
+      toast.success("Link copiato negli appunti");
+      setIsOpen(false);
+    });
+  }
 
   const mutation = useMutation({
     mutationKey: ["link"],
@@ -39,9 +47,7 @@ const LinkOptionDropdown = ({ link }: { link: link }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-        <div className="flex space-x-1 px-1 *:size-8 *:p-2">
+        <div className="flex justify-end px-1 space-x-1 *:size-8 *:p-2">
           <Button
             variant="outline"
             title="Remove"
@@ -50,7 +56,16 @@ const LinkOptionDropdown = ({ link }: { link: link }) => {
             <Trash2 className="size-4" />
             <span className="sr-only">Rimuovi</span>
           </Button>
+          <Button
+            variant="outline"
+            title="Remove"
+            onClick={() => copyToClipboard}
+          >
+            <LinkIcon />
+            <span className="sr-only">Rimuovi</span>
+          </Button>
         </div>
+        <DropdownMenuSeparator />
         <DropdownMenuItem>Yo</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>View customer</DropdownMenuItem>
