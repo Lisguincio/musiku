@@ -29,7 +29,8 @@ const LinkOptionDropdown = ({ link }: { link: link }) => {
   const mutation = useMutation({
     mutationKey: ["link"],
     mutationFn: (id: string) => deleteLink(id),
-    onSuccess: () => {
+
+    onSuccess: (id) => {
       queryClient.invalidateQueries({ queryKey: ["links"] });
       toast.success("Link eliminato con successo");
     },
@@ -41,7 +42,7 @@ const LinkOptionDropdown = ({ link }: { link: link }) => {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
+        <Button variant="ghost" className="aspect-square size-8 p-0">
           <span className="sr-only">Open menu</span>
           <MoreVertical className="h-4 w-4" />
         </Button>

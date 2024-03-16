@@ -1,8 +1,7 @@
 "use client";
-import { deleteLink, getLinks } from "@/actions/links/LinksActions";
+import { getLinks } from "@/actions/links/LinksActions";
 import { type link as LinkType } from "@prisma/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { DataTable } from "../Table/DataTable";
 import columns from "./columns";
 

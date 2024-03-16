@@ -67,7 +67,7 @@ export function NewLinkDialog({ trigger }: { trigger: React.ReactNode }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="w-auto">
         <DialogHeader>
           <DialogTitle>Aggiungi un nuovo link</DialogTitle>
           <DialogDescription>

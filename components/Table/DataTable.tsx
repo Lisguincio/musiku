@@ -55,15 +55,11 @@ export function DataTable<TData, TValue>({
       <div className="rounded-md border">
         <Table className="table-auto">
           <TableHeader>
-            {" "}
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-inherit">
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead
-                      key={header.id}
-                      style={{ width: `${header.getSize()}%` }}
-                    >
+                    <TableHead key={header.id} colSpan={header.colSpan}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(

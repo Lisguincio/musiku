@@ -1,21 +1,8 @@
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { link } from "@prisma/client";
 import { createColumnHelper } from "@tanstack/react-table";
-import { CircleCheck, CircleX, MoreVertical } from "lucide-react";
 import { DataTableColumnHeader } from "../Table/DataTableColumnHeader";
 import { Checkbox } from "../ui/checkbox";
 import LinkOptionDropdown from "./LinkOptionDropdown";
-import useTogglePublished from "@/mutations/useTogglePublished";
-import { Switch } from "../ui/switch";
-import LinkPublishedToggle from "./LinkPublishedToggle";
 
 const linkColumnHelper = createColumnHelper<link>();
 
@@ -51,15 +38,17 @@ const coverImage = linkColumnHelper.display({
   cell: ({ row }) => {
     const data = row.original;
     return (
-      <img
-        src={
-          //data.coverImage ||
-          "https://placehold.co/50x50"
-        }
-        alt={`Cover image for ${data.title}`}
-        width={50}
-        height={50}
-      />
+      <div className="w-[50px] ">
+        <img
+          src={
+            //data.coverImage ||
+            "https://placehold.co/50x50"
+          }
+          alt={`Cover image for ${data.title}`}
+          width={50}
+          height={50}
+        />
+      </div>
     );
   },
   enableSorting: false,
@@ -67,17 +56,27 @@ const coverImage = linkColumnHelper.display({
 });
 
 const title = linkColumnHelper.accessor("title", {
-  size: 200,
   header: ({ column }) => (
     <DataTableColumnHeader column={column} title="Title" />
+  ),
+  cell: ({ row }) => (
+    <p className="flex max-w-[800px] ">{row.original.title}</p>
   ),
   footer: (props) => props.column.id,
 });
 
-const published = linkColumnHelper.display({
-  id: "published",
-  cell: ({ row }) => <LinkPublishedToggle link={row.original} />,
-  footer: (props) => props.column.id,
+const author = linkColumnHelper.accessor("author", {
+  header: ({ column }) => (
+    <DataTableColumnHeader column={column} title="Author" />
+  ),
+  cell: ({ row }) => <p>{row.original.author}</p>,
+});
+
+const releaseDate = linkColumnHelper.display({
+  id: "releaseDate",
+  header: ({ column }) => (
+    <DataTableColumnHeader column={column} title="Published at" />
+  ),
 });
 
 const actions = linkColumnHelper.display({
@@ -85,6 +84,6 @@ const actions = linkColumnHelper.display({
   cell: ({ row }) => <LinkOptionDropdown link={row.original} />,
 });
 
-const columns = [selection, published, coverImage, title, actions];
+const columns = [selection, coverImage, title, author, releaseDate, actions];
 
 export default columns;
