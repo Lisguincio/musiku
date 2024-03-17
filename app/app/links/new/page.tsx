@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PlusIcon } from "lucide-react";
 import React from "react";
+import NewLinkForm from "./NewLinkForm";
 
 const Page = () => {
   return (
@@ -18,7 +19,7 @@ const Page = () => {
       <div className="mb-4">
         <h1 className="text-xl font-bold ">Aggiungi un nuovo brano</h1>
       </div>
-
+      <NewLinkForm />
       <Card className="w-full py-8">
         <CardContent>
           <form className="grid grid-cols-4">
