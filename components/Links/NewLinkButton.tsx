@@ -1,17 +1,15 @@
 import { Plus } from "lucide-react";
+import Link from "next/link";
 import { Button } from "../ui/button";
-import NewLinkDialog from "./NewLinkForm";
 
 const NewLinkButton = () => {
   return (
-    <NewLinkDialog
-      trigger={
-        <Button variant={"outline"} className="">
-          <Plus className="size-4 mr-3" />
-          Aggiungi Link
-        </Button>
-      }
-    />
+    <Link href={"/app/links/new"}>
+      <Button variant={"outline"} className="">
+        <Plus className="size-4 mr-3" />
+        Aggiungi Link
+      </Button>
+    </Link>
   );
 };
 

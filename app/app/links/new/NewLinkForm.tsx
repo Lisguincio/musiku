@@ -16,15 +16,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import useAddLinkMutation from "@/mutations/useAddLinkMutation";
-import { PlusIcon } from "lucide-react";
+import { Loader, Loader2, PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { storage } from "@/supabase/supaClient";
 
 const formSchema = z.object({
   title: z.string(),
-  /* coverImage: z
-    .instanceof(File)
-    .refine((file) => file.size < 1024 ** 5)
-    .optional(), */
+  coverImage: z.instanceof(Blob).optional(),
   author: z.string(),
 });
 type LinkType = z.infer<typeof formSchema>;
@@ -35,15 +33,27 @@ export function NewLinkForm() {
   const router = useRouter();
   const form = useForm<LinkType>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {
+      title: "",
+      author: "",
+    },
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: LinkType) {
-    mutation.mutateAsync(values).then((val) => {
-      router.replace("/app/links");
+  const onSubmit = async (values: LinkType) => {
+    console.log(values);
+    const data = new FormData();
+    Object.entries(values).forEach(([key, value]) => {
+      if (value instanceof Blob) {
+        data.append(key, value);
+      } else {
+        data.append(key, value);
+      }
     });
-  }
+
+    await mutation.mutateAsync(data);
+    router.replace("/app/links");
+  };
 
   return (
     <Form {...form}>
@@ -52,13 +62,13 @@ export function NewLinkForm() {
           <div className="">
             <FormField
               name="coverImage"
-              render={({ field }) => (
+              render={({ field: { onChange, value, ...other } }) => (
                 <FormItem className="w-40">
                   <FormLabel className="">Cover Image</FormLabel>
                   <FormLabel className="relative flex w-full h-full aspect-square justify-center items-center rounded-md border-dashed border">
-                    {field.value ? (
+                    {value ? (
                       <img
-                        src={field.value}
+                        src={URL.createObjectURL(value)}
                         alt="Cover Image"
                         className="w-full h-full object-cover"
                       />
@@ -67,7 +77,16 @@ export function NewLinkForm() {
                     )}
                   </FormLabel>
                   <FormControl>
-                    <Input className="hidden" type="file" {...field} />
+                    <Input
+                      className="hidden"
+                      type="file"
+                      {...other}
+                      onChange={(event) => {
+                        const file = event.target.files?.item(0);
+                        if (!file) return null;
+                        onChange(file);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -107,7 +126,12 @@ export function NewLinkForm() {
           </div>
         </div>
         <div className="flex justify-end ">
-          <Button type="submit">Submit</Button>
+          <Button type="submit">
+            Aggiungi{" "}
+            {form.formState.isSubmitting && (
+              <Loader2 className=" size-4 ml-4 animate-spin" />
+            )}
+          </Button>
         </div>
       </form>
     </Form>

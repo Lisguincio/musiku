@@ -40,10 +40,7 @@ const coverImage = linkColumnHelper.display({
     return (
       <div className="w-[50px] ">
         <img
-          src={
-            //data.coverImage ||
-            "https://placehold.co/50x50"
-          }
+          src={data.coverImage || "https://placehold.co/50x50"}
           alt={`Cover image for ${data.title}`}
           width={50}
           height={50}
