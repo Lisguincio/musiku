@@ -5,6 +5,20 @@ import { storage } from "@/supabase/supaClient";
 import { Prisma } from "@prisma/client";
 import { randomUUID } from "crypto";
 
+export async function getMusicProviders() {
+  console.log("Ricevuta richiesta di tutti i provider");
+  const session = await getServerAuthSession();
+  if (!session) throw new Error("Utente non autenticato");
+  try {
+    const result = await prisma.provider.findMany();
+    console.log(result);
+    return result;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
+
 export async function getLinks() {
   //console.log("Ricevuta richiesta di tutti i link");
   const session = await getServerAuthSession();
@@ -24,6 +38,21 @@ export async function getLinks() {
   }
 }
 
+export async function getLink(id: string) {
+  try {
+    console.log(`Ricevuta richiesta di un link[${id}]`);
+    const result = await prisma.link.findFirst({
+      where: {
+        id,
+      },
+    });
+    return result;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
+
 export async function addLink(data: FormData) {
   try {
     console.log(`Aggiunta di un link ricevuta!`);
@@ -34,6 +63,8 @@ export async function addLink(data: FormData) {
     const title = data.get("title") as string;
     const author = data.get("author") as string;
     const coverImage = data.get("coverImage") as Blob;
+    const urls = data.getAll("urls[]") as string[];
+    const decodedUrls = urls.map((url) => JSON.parse(url));
 
     //Carico l'immagine su Supabase
     const { data: file, error } = await storage
@@ -49,6 +80,18 @@ export async function addLink(data: FormData) {
         title: title as string,
         author: author as string,
         coverImage: url,
+        urls: {
+          createMany: {
+            data: decodedUrls
+              .filter((link) => !!link.url)
+              .map((url) => ({
+                providerName: url.provider,
+                url: url.url,
+                id: randomUUID(),
+                text: url.buttonText || "Ascolta",
+              })),
+          },
+        },
         user: {
           connect: {
             id: session.user.id,

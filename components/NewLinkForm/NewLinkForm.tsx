@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -19,38 +19,51 @@ import useAddLinkMutation from "@/mutations/useAddLinkMutation";
 import { Loader, Loader2, PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { storage } from "@/supabase/supaClient";
+import LinkUrlList from "./UrlList";
+import { Prisma, provider } from "@prisma/client";
 
 const formSchema = z.object({
   title: z.string(),
   coverImage: z.instanceof(Blob).optional(),
   author: z.string(),
+  urls: z.array(
+    z.object({
+      id: z.number(),
+      icon: z.string().optional(),
+      provider: z.string(),
+      url: z.string(),
+      buttonText: z.string().optional().default("Ascolta"),
+    })
+  ),
 });
-type LinkType = z.infer<typeof formSchema>;
+export type LinkType = z.infer<typeof formSchema>;
 
-export function NewLinkForm() {
-  // 1. Define your form.
-  const mutation = useAddLinkMutation();
+export function NewLinkForm({ providers }: { providers: provider[] }) {
   const router = useRouter();
+  const mutation = useAddLinkMutation();
   const form = useForm<LinkType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       author: "",
+      urls: providers.map((provider, index) => ({
+        id: index,
+        provider: provider.name,
+        icon: provider.icon,
+        url: "",
+      })),
     },
   });
 
-  // 2. Define a submit handler.
   const onSubmit = async (values: LinkType) => {
     console.log(values);
     const data = new FormData();
-    Object.entries(values).forEach(([key, value]) => {
-      if (value instanceof Blob) {
-        data.append(key, value);
-      } else {
-        data.append(key, value);
-      }
+    data.append("title", values.title);
+    data.append("author", values.author);
+    if (values.coverImage) data.append("coverImage", values.coverImage);
+    values.urls.forEach((url, index) => {
+      data.append(`urls[]`, JSON.stringify(url));
     });
-
     await mutation.mutateAsync(data);
     router.replace("/app/links");
   };
@@ -125,9 +138,10 @@ export function NewLinkForm() {
             />
           </div>
         </div>
+        <LinkUrlList />
         <div className="flex justify-end ">
-          <Button type="submit">
-            Aggiungi{" "}
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            Aggiungi
             {form.formState.isSubmitting && (
               <Loader2 className=" size-4 ml-4 animate-spin" />
             )}

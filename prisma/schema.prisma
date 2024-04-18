@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model account {
@@ -33,10 +34,28 @@ model link {
   releaseDate DateTime? @db.Timestamp(6)
   published   Boolean   @default(false)
   coverImage  String?
-  links       Json[]    @db.Json
+  urls        url[]
   createdAt   DateTime  @default(now()) @db.Timestamp(6)
   updatedAt   DateTime  @default(now()) @db.Timestamp(6)
   user        user      @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "link_ownerId_user_id_fk")
+}
+
+model url {
+  id        String   @id @default(uuid())
+  linkId    String
+  providerName String
+  url       String
+  text      String?
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @db.Timestamp(6)
+  link      link     @relation(fields: [linkId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "url_linkId_link_id_fk")
+  provider  provider @relation(fields: [providerName],references: [name], onDelete: NoAction, onUpdate: NoAction, map: "url_providerId_provider_name_fk")
+}
+
+model provider {
+  name String @id
+  icon String
+  urls url[]
 }
 
 model session {
